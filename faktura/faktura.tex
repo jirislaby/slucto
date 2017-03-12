@@ -1,5 +1,5 @@
 % vim: textwidth=78 ai spell spelllang=cs sw=2
-\documentclass[11pt]{article}
+\documentclass[11pt,a4paper]{article}
 \usepackage[utf8x]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{graphicx}
@@ -14,7 +14,7 @@
 \setlength{\voffset}{-1in}
 \addtolength{\voffset}{1.5cm}
 \setlength{\textheight}{29.7cm}
-\addtolength{\textheight}{-3.5cm}
+\addtolength{\textheight}{-3cm}
 
 \setlength{\headheight}{0pt}
 \setlength{\headsep}{0pt}
@@ -33,8 +33,9 @@
 \end{flushright}
 %
 \noindent
+\renewcommand{\arraystretch}{1.2}
 \begin{tabularx}{\textwidth}{|l|X|} \hline
-  Dodavatel: & Variabilní symbol: @FAKTURA@ \\ \cline{2-2}
+  Dodavatel: & Variabilní symbol: @VARIABILNI@ \\ \cline{2-2}
   ~\begin{tabular}{l}
     \\
      \textbf{Jiří Slabý} \\
@@ -59,9 +60,11 @@
 \end{tabularx} \\[.2ex]
 
 \noindent
-Datum vystavení: @VYSTAVENI@ \\
-Datum splatnosti: @SPLATNOST@ \\
-Platba: převodem na účet
+\begin{tabular}{ll}
+  Datum vystavení:	& @VYSTAVENI@ \\
+  Datum splatnosti:	& @SPLATNOST@ \\
+  Platba:		& převodem na účet
+\end{tabular}
 
 \vspace{3em}
 
@@ -71,12 +74,8 @@ Platba: převodem na účet
 \begin{tabularx}{\textwidth}{Xlrr}
   Položka & Množ. & Jedn.\ cena & Celkem \\ \hline
   @POLOZKA@ & @PMN@ & @JCENA@ & @PCENA@ \\
-  @POLOZKA@ & @PMN@ & @JCENA@ & @PCENA@ \\
-  @POLOZKA@ & @PMN@ & @JCENA@ & @PCENA@ \\
-  @POLOZKA@ & @PMN@ & @JCENA@ & @PCENA@ \\
-  @POLOZKA@ & @PMN@ & @JCENA@ & @PCENA@ \\
-  @POLOZKA@ & @PMN@ & @JCENA@ & @PCENA@ \\ \hline
   \rowcolor{white}
+  \hline
   \multicolumn{3}{r}{Celkem Kč} & @CELKEM@ \\
 \end{tabularx}
 
