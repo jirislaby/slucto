@@ -1,0 +1,99 @@
+#!/usr/bin/perl -w
+use strict;
+use DBI;
+#use Data::Dumper;
+
+my $cislo_faktury = 201703001;
+my $in = 'faktura/faktura.tex';
+my $out = "/tmp/faktura_$cislo_faktury.tex";
+my $dbfile = 'slucto.db';
+
+open(IN, "<$in") || die "cannot open $in";
+my @tex = <IN>;
+close(IN);
+
+my $i = 0;
+my $beg_idx;
+
+foreach (@tex) {
+	if (/\@POLOZKA\@/) {
+		$beg_idx = $i;
+		last;
+	}
+	$i++;
+}
+
+my @begin = splice(@tex, 0, $beg_idx);
+my @one = splice(@tex, 0, 1);
+my @end = @tex;
+
+open(OUT, ">$out") || die "cannot open $out";
+
+my $dbh = DBI->connect("dbi:SQLite:dbname=$dbfile","","", {AutoCommit => 0}) ||
+	die "connect to db error: " . DBI::errstr;
+
+$dbh->do("PRAGMA foreign_keys = ON");
+
+my $data = $dbh->prepare("SELECT faktura.id, printf('%.10d', faktura.id) var, " .
+	"strftime('%d. %m. %Y', faktura.vystaveni, 'unixepoch', 'localtime') vystaveni, " .
+	"strftime('%d. %m. %Y', faktura.splatnost, 'unixepoch', 'localtime') splatnost, " .
+	"prijemce.* FROM faktura, prijemce ON faktura.prijemce == prijemce.ic " .
+	"WHERE faktura.id == ?") || die "cannot prepare";
+$data->execute($cislo_faktury);
+my $faktura = $data->fetchrow_hashref;
+#print Dumper($faktura);
+$data->finish;
+
+foreach (@begin) {
+	s/\@FAKTURA\@/$$faktura{'id'}/;
+	s/\@VARIABILNI\@/$$faktura{'var'}/;
+	s/\@VYSTAVENI\@/$$faktura{'vystaveni'}/;
+	s/\@SPLATNOST\@/$$faktura{'splatnost'}/;
+	s/\@PRIJEMCENAZEV\@/$$faktura{'nazev'}/;
+	s/\@PRIJEMCEADR1\@/$$faktura{'ulice'}/;
+	s/\@PRIJEMCEADR2\@/$$faktura{'mesto'}/;
+	s/\@PRIJEMCEADR3\@/$$faktura{'psc'}/;
+	s/\@PRIJEMCEIC\@/$$faktura{'ic'}/;
+	print OUT;
+}
+
+my $celkem = 0;
+
+$data = $dbh->prepare("SELECT polozka.nazev, faktura_polozka.poznamka, " .
+	"faktura_polozka.pocet, polozka.cena, " .
+	"faktura_polozka.pocet * polozka.cena AS celkem " .
+	"FROM polozka, faktura_polozka " .
+	"ON polozka.id == faktura_polozka.id_polozka " .
+	"WHERE faktura_polozka.id_faktura == ?") || die "cannot prepare";
+$data->execute($cislo_faktury);
+while (my $polozka = $data->fetchrow_hashref) {
+#	print Dumper($polozka);
+	my @one_copy = @one;
+	my $nazev = $$polozka{'nazev'};
+	if (defined $$polozka{'poznamka'}) {
+		$nazev .= ", " . $$polozka{'poznamka'};
+	}
+	foreach (@one_copy) {
+		s/\@POLOZKA\@/$nazev/;
+		s/\@PMN\@/$$polozka{'pocet'}/;
+		s/\@JCENA\@/$$polozka{'cena'}/;
+		s/\@PCENA\@/$$polozka{'celkem'}/;
+		print OUT;
+	}
+	$celkem += $$polozka{'celkem'};
+}
+$data->finish;
+$dbh->disconnect;
+
+foreach (@end) {
+	s/\@CELKEM\@/$celkem/;
+	print OUT;
+}
+
+close(OUT);
+
+chdir '/tmp';
+system('pdflatex', $out) == 0 or die "cannot exec pdflatex on $out";
+exec('xdg-open', "faktura_$cislo_faktury.pdf") or die;
+
+1;
