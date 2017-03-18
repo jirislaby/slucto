@@ -1,0 +1,88 @@
+% vim: textwidth=78 ai spell spelllang=cs sw=2
+\documentclass[11pt]{article}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{xspace}
+\usepackage{a4wide}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage[table]{xcolor}
+
+\pagestyle{empty}
+
+\setlength{\voffset}{-1in}
+\addtolength{\voffset}{1.5cm}
+\setlength{\textheight}{29.7cm}
+\addtolength{\textheight}{-3.5cm}
+
+\setlength{\headheight}{0pt}
+\setlength{\headsep}{0pt}
+\setlength{\footskip}{0pt}
+
+\setlength{\oddsidemargin}{0pt}
+
+\setlength{\hoffset}{-1in}
+\addtolength{\hoffset}{1.5cm}
+\setlength{\textwidth}{18cm}
+
+\begin{document}
+
+\begin{flushright}
+  \textbf{Faktura č.\ @FAKTURA@}
+\end{flushright}
+%
+\noindent
+\begin{tabularx}{\textwidth}{|l|X|} \hline
+  Dodavatel: & Variabilní symbol: @FAKTURA@ \\ \cline{2-2}
+  ~\begin{tabular}{l}
+    \\
+     \textbf{Jiří Slabý} \\
+     Oblá 56 \\
+     634 00, Brno \\
+     \\
+     IČ: 05850576 \\
+     Banka: mBank \\
+     Číslo účtu: 670100-2202003268/6210 \\
+     \\
+  \end{tabular}
+  &
+  \begin{tabular}{p{1.5em}p{23.5em}}
+    \multicolumn{2}{l}{Příjemce:} \\
+    & @PRIJEMCENAZEV@ \\
+    & @PRIJEMCEADR1@ \\
+    & @PRIJEMCEADR2@ \\
+    & @PRIJEMCEADR3@ \\
+    & IČ: @PRIJEMCEIC@ \\
+  \end{tabular}
+  \\ \hline
+\end{tabularx} \\[.2ex]
+
+\noindent
+Datum vystavení: @VYSTAVENI@ \\
+Datum splatnosti: @SPLATNOST@ \\
+Platba: převodem na účet
+
+\vspace{3em}
+
+\noindent
+\rowcolors{2}{white}{gray!15}
+\setlength\arrayrulewidth{1pt}
+\begin{tabularx}{\textwidth}{Xlrr}
+  Položka & Množ. & Jedn.\ cena & Celkem \\ \hline
+  @POLOZKA@ & @PMN@ & @JCENA@ & @PCENA@ \\
+  @POLOZKA@ & @PMN@ & @JCENA@ & @PCENA@ \\
+  @POLOZKA@ & @PMN@ & @JCENA@ & @PCENA@ \\
+  @POLOZKA@ & @PMN@ & @JCENA@ & @PCENA@ \\
+  @POLOZKA@ & @PMN@ & @JCENA@ & @PCENA@ \\
+  @POLOZKA@ & @PMN@ & @JCENA@ & @PCENA@ \\ \hline
+  \rowcolor{white}
+  \multicolumn{3}{r}{Celkem Kč} & @CELKEM@ \\
+\end{tabularx}
+
+\vfill
+
+\noindent
+Dodavatel je registrován v živnostenském rejstříku.
+
+\end{document}
