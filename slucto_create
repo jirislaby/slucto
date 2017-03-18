@@ -2,7 +2,17 @@
 use strict;
 use DBI;
 
-my $out = 'slucto.db';
+my $dbpath = $ENV{"HOME"} . "/.config";
+
+die ("no .config in HOME?") if (!-d $dbpath);
+
+$dbpath .= '/slucto';
+
+if (!-d $dbpath) {
+	mkdir($dbpath) || die "cannot create slucto dir in .config";
+}
+
+my $out = $dbpath . '/slucto.db';
 
 if (-e $out) {
 	my $reply = "N";

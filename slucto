@@ -1,12 +1,23 @@
 #!/usr/bin/perl -w
 use strict;
 use DBI;
+use File::Basename;
 #use Data::Dumper;
 
 my $cislo_faktury = 201703001;
-my $in = 'faktura/faktura.tex';
+my @search_dirs = (dirname($0) . '/faktura', "/usr/share/slucto/");
+my $in = undef;
 my $out = "/tmp/faktura_$cislo_faktury.tex";
-my $dbfile = 'slucto.db';
+my $dbfile = $ENV{"HOME"} . "/.config/slucto/slucto.db";
+
+foreach (@search_dirs) {
+	if (-f "$_/faktura.tex") {
+		$in = "$_/faktura.tex";
+		last;
+	}
+}
+
+die 'faktura.tex not found in search dirs' unless (defined $in);
 
 open(IN, "<$in") || die "cannot open $in";
 my @tex = <IN>;
