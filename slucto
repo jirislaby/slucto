@@ -4,7 +4,9 @@ use DBI;
 use File::Basename;
 #use Data::Dumper;
 
-my $cislo_faktury = 201703001;
+die 'too few arguments' if (scalar @ARGV < 1);
+
+my $cislo_faktury = $ARGV[0];
 my @search_dirs = (dirname($0) . '/faktura', "/usr/share/slucto/");
 my $in = undef;
 my $out = "/tmp/faktura_$cislo_faktury.tex";
@@ -38,8 +40,6 @@ my @begin = splice(@tex, 0, $beg_idx);
 my @one = splice(@tex, 0, 1);
 my @end = @tex;
 
-open(OUT, ">$out") || die "cannot open $out";
-
 my $dbh = DBI->connect("dbi:SQLite:dbname=$dbfile","","", {AutoCommit => 0}) ||
 	die "connect to db error: " . DBI::errstr;
 
@@ -50,10 +50,16 @@ my $data = $dbh->prepare("SELECT faktura.id, printf('%.10d', faktura.id) var, " 
 	"strftime('%d. %m. %Y', faktura.splatnost, 'unixepoch', 'localtime') splatnost, " .
 	"prijemce.* FROM faktura, prijemce ON faktura.prijemce == prijemce.ic " .
 	"WHERE faktura.id == ?") || die "cannot prepare";
-$data->execute($cislo_faktury);
+$data->execute($cislo_faktury) || die 'cannot execute';
 my $faktura = $data->fetchrow_hashref;
+if (!defined $faktura) {
+	$dbh->disconnect;
+	die 'no invoice of that number';
+}
 #print Dumper($faktura);
 $data->finish;
+
+open(OUT, ">$out") || die "cannot open $out";
 
 foreach (@begin) {
 	s/\@FAKTURA\@/$$faktura{'id'}/;
