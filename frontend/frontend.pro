@@ -35,3 +35,16 @@ HEADERS  += slucto.h \
 FORMS    += slucto.ui \
     picker.ui \
     printinvoice.ui
+
+unix {
+    isEmpty(PREFIX) {
+	PREFIX = /usr
+    }
+    BINDIR = $$PREFIX/bin
+    DATADIR = $$PREFIX/share
+
+    DEFINES += DATADIR=\\\"$$DATADIR\\\"
+
+    target.path = $$BINDIR
+    INSTALLS += target
+}

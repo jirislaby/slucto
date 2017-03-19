@@ -9,7 +9,7 @@ all:
 
 install:
 	$(INSTALL_DIR) $(DESTDIR)/$(bindir)
-	$(INSTALL) slucto $(DESTDIR)/$(bindir)
+	$(INSTALL) slucto_cli $(DESTDIR)/$(bindir)
 	$(INSTALL) slucto_create $(DESTDIR)/$(bindir)
 	$(INSTALL_DIR) $(DESTDIR)/$(datadir)/slucto
 	$(INSTALL_DATA) faktura/faktura.tex $(DESTDIR)/$(datadir)/slucto
