@@ -6,7 +6,14 @@ SlUcto::SlUcto(QWidget *parent) :
     ui(new Ui::SlUcto)
 {
     ui->setupUi(this);
-    ui->tableView->setModel(1, &model);
+    rcvModel.setTable("prijemce");
+    rcvModel.select();
+    itmModel.setTable("polozka");
+    itmModel.select();
+    ui->rcvView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->rcvView->setModel(&rcvModel);
+    ui->itmView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->itmView->setModel(&itmModel);
 }
 
 SlUcto::~SlUcto()

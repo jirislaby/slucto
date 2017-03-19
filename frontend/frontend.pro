@@ -6,9 +6,9 @@
 
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets sql
 
-TARGET = frontend
+TARGET = slucto
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -24,8 +24,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += main.cpp\
-        slucto.cpp
+        slucto.cpp \
+    picker.cpp \
+    printinvoice.cpp
 
-HEADERS  += slucto.h
+HEADERS  += slucto.h \
+    picker.h \
+    printinvoice.h
 
-FORMS    += slucto.ui
+FORMS    += slucto.ui \
+    picker.ui \
+    printinvoice.ui

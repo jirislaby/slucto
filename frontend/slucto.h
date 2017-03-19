@@ -2,6 +2,7 @@
 #define SLUCTO_H
 
 #include <QMainWindow>
+#include <QtSql>
 
 namespace Ui {
 class SlUcto;
@@ -17,6 +18,8 @@ public:
 
 private:
     Ui::SlUcto *ui;
+    QSqlTableModel rcvModel;
+    QSqlTableModel itmModel;
 };
 
 #endif // SLUCTO_H
