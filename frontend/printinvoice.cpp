@@ -38,7 +38,7 @@ void PrintInvoice::printInvoice()
         qDebug() << "row" << i.row() << "id" << id;
 
         QProcess process;
-        process.start("../slucto_cli", QStringList() << QString::number(id));
+        process.start("slucto_cli", QStringList() << QString::number(id));
         process.waitForFinished(-1);
         qDebug() << "exit code", process.exitCode();
     }
