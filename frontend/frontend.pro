@@ -24,17 +24,19 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += main.cpp\
-        slucto.cpp \
     picker.cpp \
-    printinvoice.cpp
+    printinvoice.cpp \
+    newinvoice.cpp
 
-HEADERS  += slucto.h \
+HEADERS  += \
     picker.h \
-    printinvoice.h
+    printinvoice.h \
+    newinvoice.h
 
-FORMS    += slucto.ui \
+FORMS    += \
     picker.ui \
-    printinvoice.ui
+    printinvoice.ui \
+    newinvoice.ui
 
 unix {
     isEmpty(PREFIX) {

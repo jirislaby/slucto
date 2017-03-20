@@ -11,18 +11,30 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Tisk faktury</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QTableView" name="invView">
+      <property name="editTriggers">
+       <set>QAbstractItemView::NoEditTriggers</set>
+      </property>
       <property name="alternatingRowColors">
        <bool>true</bool>
       </property>
       <property name="selectionBehavior">
        <enum>QAbstractItemView::SelectRows</enum>
       </property>
+      <property name="horizontalScrollMode">
+       <enum>QAbstractItemView::ScrollPerPixel</enum>
+      </property>
+      <attribute name="horizontalHeaderDefaultSectionSize">
+       <number>200</number>
+      </attribute>
+      <attribute name="horizontalHeaderStretchLastSection">
+       <bool>true</bool>
+      </attribute>
      </widget>
     </item>
     <item>
@@ -55,6 +67,9 @@
         <property name="text">
          <string>&amp;Konec</string>
         </property>
+        <property name="shortcut">
+         <string>Esc</string>
+        </property>
        </widget>
       </item>
      </layout>
@@ -80,5 +95,40 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>invView</sender>
+   <signal>doubleClicked(QModelIndex)</signal>
+   <receiver>PrintInvoice</receiver>
+   <slot>printInvoice()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>684</x>
+     <y>135</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>797</x>
+     <y>92</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>prnButton</sender>
+   <signal>clicked()</signal>
+   <receiver>PrintInvoice</receiver>
+   <slot>printInvoice()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>675</x>
+     <y>579</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>509</x>
+     <y>574</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>printInvoice()</slot>
+ </slots>
 </ui>

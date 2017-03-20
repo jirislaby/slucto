@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>235</width>
+    <width>200</width>
     <height>102</height>
    </rect>
   </property>
@@ -21,16 +21,19 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QPushButton" name="printInvButton">
+    <widget class="QPushButton" name="newInvButton">
      <property name="text">
-      <string>&amp;Tisk faktury</string>
+      <string>&amp;Nová faktura</string>
+     </property>
+     <property name="default">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="newInvButton">
+    <widget class="QPushButton" name="printInvButton">
      <property name="text">
-      <string>&amp;Nová faktura</string>
+      <string>&amp;Tisk faktury</string>
      </property>
     </widget>
    </item>
@@ -39,10 +42,18 @@
      <property name="text">
       <string>&amp;Konec</string>
      </property>
+     <property name="shortcut">
+      <string>Esc</string>
+     </property>
     </widget>
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>newInvButton</tabstop>
+  <tabstop>printInvButton</tabstop>
+  <tabstop>exitButton</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -61,5 +72,41 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>printInvButton</sender>
+   <signal>clicked()</signal>
+   <receiver>Picker</receiver>
+   <slot>printInvoice()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>154</x>
+     <y>55</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>129</x>
+     <y>36</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>newInvButton</sender>
+   <signal>clicked()</signal>
+   <receiver>Picker</receiver>
+   <slot>newInvoice()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>186</x>
+     <y>21</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>210</x>
+     <y>36</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>printInvoice()</slot>
+  <slot>newInvoice()</slot>
+ </slots>
 </ui>

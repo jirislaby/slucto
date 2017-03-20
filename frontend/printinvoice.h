@@ -16,6 +16,9 @@ public:
     explicit PrintInvoice(QWidget *parent = 0);
     ~PrintInvoice();
 
+private slots:
+    void printInvoice();
+
 private:
     Ui::PrintInvoice *ui;
     QSqlQueryModel model;

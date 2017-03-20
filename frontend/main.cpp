@@ -1,4 +1,4 @@
-#include "slucto.h"
+#include "newinvoice.h"
 #include "picker.h"
 #include "printinvoice.h"
 #include <QApplication>
@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     QDir confDir(QStandardPaths::standardLocations(QStandardPaths::AppConfigLocation)[0]);
     QString confFile(confDir.absoluteFilePath("slucto.db"));
     if (!QFile::exists(confFile)) {
-        qCritical("config file not found " + confFile.toLatin1());
+        qCritical("database file not found at " + confFile.toLatin1());
         return EXIT_FAILURE;
     }
     qDebug() << "using database at " << confFile;
@@ -31,16 +31,8 @@ int main(int argc, char *argv[])
     }
 #endif
 
-//    Picker p;
-//    p.show();
-
-    PrintInvoice pi;
-    pi.show();
-
-    if (0) {
-        SlUcto w;
-        w.show();
-    }
+    Picker p;
+    p.show();
 
     return a.exec();
 }

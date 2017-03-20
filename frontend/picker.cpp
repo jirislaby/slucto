@@ -1,3 +1,5 @@
+#include <QDebug>
+
 #include "picker.h"
 #include "ui_picker.h"
 
@@ -11,4 +13,16 @@ Picker::Picker(QWidget *parent) :
 Picker::~Picker()
 {
     delete ui;
+}
+
+void Picker::printInvoice()
+{
+    pi.show();
+    this->hide();
+}
+
+void Picker::newInvoice()
+{
+    su.show();
+    this->hide();
 }
