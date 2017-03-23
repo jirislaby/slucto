@@ -19,8 +19,8 @@ sub dump_items($) {
 
 	my $data = $dbh->prepare("SELECT polozka.nazev, " .
 		"faktura_polozka.poznamka, " .
-		"faktura_polozka.pocet, polozka.cena, " .
-		"faktura_polozka.pocet * polozka.cena AS celkem " .
+		"faktura_polozka.pocet, faktura_polozka.cena, " .
+		"faktura_polozka.pocet * faktura_polozka.cena AS celkem " .
 		"FROM polozka, faktura_polozka " .
 		"ON polozka.id == faktura_polozka.id_polozka " .
 		"WHERE faktura_polozka.id_faktura == ?") ||

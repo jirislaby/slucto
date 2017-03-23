@@ -41,10 +41,11 @@ $dbh->do("CREATE TABLE faktura(id INTEGER PRIMARY KEY, " .
 	"FOREIGN KEY(prijemce) REFERENCES prijemce(ic))");
 
 $dbh->do("CREATE TABLE polozka(id INTEGER PRIMARY KEY, " .
-	"nazev STRING NOT NULL, cena REAL NOT NULL)");
+	"nazev STRING NOT NULL UNIQUE, cena REAL)");
 
-$dbh->do("CREATE TABLE faktura_polozka(id_faktura INTEGER, " .
-		"id_polozka INTEGER, pocet INTEGER, poznamka STRING, " .
+$dbh->do("CREATE TABLE faktura_polozka(id_faktura INTEGER NOT NULL, " .
+		"id_polozka INTEGER NOT NULL, pocet INTEGER NOT NULL, " .
+		"cena REAL NOT NULL, poznamka STRING, " .
 		"UNIQUE(id_faktura, id_polozka, poznamka), " .
 		"FOREIGN KEY(id_faktura) REFERENCES faktura(id), " .
 		"FOREIGN KEY(id_polozka) REFERENCES polozka(id))");
@@ -67,8 +68,9 @@ $data->execute("Školení pro 4 a více osob/den", 4200);
 $data->finish;
 
 $data = $dbh->prepare("INSERT INTO faktura_polozka(id_faktura, id_polozka, " .
-	"pocet, poznamka) VALUES (?, ?, ?, ?)");
-$data->execute(201703001, 3, 3, 'v termínu 8-10. 3. 2017');
+	"pocet, poznamka, cena) SELECT ?, id, ?, ?, cena FROM polozka " .
+	"WHERE id = ?");
+$data->execute(201703001, 3, 'v termínu 8-10. 3. 2017', 3);
 $data->finish;
 
 $dbh->commit;
