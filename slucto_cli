@@ -4,13 +4,77 @@ use DBI;
 use File::Basename;
 #use Data::Dumper;
 
-die 'too few arguments' if (scalar @ARGV < 1);
+my $dbfile = $ENV{"HOME"} . "/.config/slucto/slucto.db";
+my $one_invoice = scalar @ARGV >= 1;
+my @one;
+
+my $dbh = DBI->connect("dbi:SQLite:dbname=$dbfile","","", {AutoCommit => 0}) ||
+	die "connect to db error: " . DBI::errstr;
+
+$dbh->do("PRAGMA foreign_keys = ON");
+
+sub dump_items($) {
+	my ($invoice) = @_;
+	my $celkem = 0;
+
+	my $data = $dbh->prepare("SELECT polozka.nazev, " .
+		"faktura_polozka.poznamka, " .
+		"faktura_polozka.pocet, polozka.cena, " .
+		"faktura_polozka.pocet * polozka.cena AS celkem " .
+		"FROM polozka, faktura_polozka " .
+		"ON polozka.id == faktura_polozka.id_polozka " .
+		"WHERE faktura_polozka.id_faktura == ?") ||
+			die "cannot prepare";
+	$data->execute($invoice);
+	while (my $polozka = $data->fetchrow_hashref) {
+	#	print Dumper($polozka);
+		my @one_copy = @one;
+		my $nazev = $$polozka{'nazev'};
+		if (defined $$polozka{'poznamka'}) {
+			$nazev .= ", " . $$polozka{'poznamka'};
+		}
+		if ($one_invoice) {
+			foreach (@one_copy) {
+				s/\@POLOZKA\@/$nazev/;
+				s/\@PMN\@/$$polozka{'pocet'}/;
+				s/\@JCENA\@/$$polozka{'cena'}/;
+				s/\@PCENA\@/$$polozka{'celkem'}/;
+				print OUT;
+			}
+		} else {
+			printf("    %-75s %4d * %6.2f = %6.2f\n" ,$nazev,
+				$$polozka{'pocet'}, $$polozka{'cena'},
+				$$polozka{'celkem'});
+		}
+		$celkem += $$polozka{'celkem'};
+	}
+	$data->finish;
+
+	return $celkem;
+}
+
+my $data = $dbh->prepare("SELECT faktura.id, printf('%.10d', faktura.id) var, " .
+	"strftime('%d. %m. %Y', faktura.vystaveni, 'unixepoch', 'localtime') vystaveni, " .
+	"strftime('%d. %m. %Y', faktura.splatnost, 'unixepoch', 'localtime') splatnost, " .
+	"prijemce.* FROM faktura, prijemce ON faktura.prijemce == prijemce.ic " .
+	($one_invoice ? "WHERE faktura.id == ?" : "")) || die "cannot prepare";
+
+if (!$one_invoice) {
+	$data->execute() || die 'cannot execute';
+	while (my $invoice = $data->fetchrow_hashref) {
+		print "ID($$invoice{'id'}) V($$invoice{'vystaveni'}) ",
+			"S($$invoice{'splatnost'}) RCV($$invoice{'nazev'})\n";
+		dump_items($$invoice{'id'});
+	}
+
+	$dbh->disconnect;
+	exit 1;
+}
 
 my $cislo_faktury = $ARGV[0];
 my @search_dirs = (dirname($0) . '/faktura', "/usr/share/slucto/");
 my $in = undef;
 my $out = "/tmp/faktura_$cislo_faktury.tex";
-my $dbfile = $ENV{"HOME"} . "/.config/slucto/slucto.db";
 
 foreach (@search_dirs) {
 	if (-f "$_/faktura.tex") {
@@ -37,19 +101,9 @@ foreach (@tex) {
 }
 
 my @begin = splice(@tex, 0, $beg_idx);
-my @one = splice(@tex, 0, 1);
+@one = splice(@tex, 0, 1);
 my @end = @tex;
 
-my $dbh = DBI->connect("dbi:SQLite:dbname=$dbfile","","", {AutoCommit => 0}) ||
-	die "connect to db error: " . DBI::errstr;
-
-$dbh->do("PRAGMA foreign_keys = ON");
-
-my $data = $dbh->prepare("SELECT faktura.id, printf('%.10d', faktura.id) var, " .
-	"strftime('%d. %m. %Y', faktura.vystaveni, 'unixepoch', 'localtime') vystaveni, " .
-	"strftime('%d. %m. %Y', faktura.splatnost, 'unixepoch', 'localtime') splatnost, " .
-	"prijemce.* FROM faktura, prijemce ON faktura.prijemce == prijemce.ic " .
-	"WHERE faktura.id == ?") || die "cannot prepare";
 $data->execute($cislo_faktury) || die 'cannot execute';
 my $faktura = $data->fetchrow_hashref;
 if (!defined $faktura) {
@@ -73,34 +127,7 @@ foreach (@begin) {
 	s/\@PRIJEMCEIC\@/$$faktura{'ic'}/;
 	print OUT;
 }
-
-my $celkem = 0;
-
-$data = $dbh->prepare("SELECT polozka.nazev, faktura_polozka.poznamka, " .
-	"faktura_polozka.pocet, polozka.cena, " .
-	"faktura_polozka.pocet * polozka.cena AS celkem " .
-	"FROM polozka, faktura_polozka " .
-	"ON polozka.id == faktura_polozka.id_polozka " .
-	"WHERE faktura_polozka.id_faktura == ?") || die "cannot prepare";
-$data->execute($cislo_faktury);
-while (my $polozka = $data->fetchrow_hashref) {
-#	print Dumper($polozka);
-	my @one_copy = @one;
-	my $nazev = $$polozka{'nazev'};
-	if (defined $$polozka{'poznamka'}) {
-		$nazev .= ", " . $$polozka{'poznamka'};
-	}
-	foreach (@one_copy) {
-		s/\@POLOZKA\@/$nazev/;
-		s/\@PMN\@/$$polozka{'pocet'}/;
-		s/\@JCENA\@/$$polozka{'cena'}/;
-		s/\@PCENA\@/$$polozka{'celkem'}/;
-		print OUT;
-	}
-	$celkem += $$polozka{'celkem'};
-}
-$data->finish;
-$dbh->disconnect;
+my $celkem = dump_items($cislo_faktury);
 
 foreach (@end) {
 	s/\@CELKEM\@/$celkem/;
