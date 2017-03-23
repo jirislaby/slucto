@@ -17,53 +17,53 @@ sub dump_items($) {
 	my ($invoice) = @_;
 	my $celkem = 0;
 
-	my $data = $dbh->prepare("SELECT polozka.nazev, " .
-		"faktura_polozka.poznamka, " .
-		"faktura_polozka.pocet, faktura_polozka.cena, " .
-		"faktura_polozka.pocet * faktura_polozka.cena AS celkem " .
-		"FROM polozka, faktura_polozka " .
-		"ON polozka.id == faktura_polozka.id_polozka " .
-		"WHERE faktura_polozka.id_faktura == ?") ||
+	my $data = $dbh->prepare("SELECT item.name, " .
+		"invoice_item.note, " .
+		"invoice_item.count, invoice_item.price, " .
+		"invoice_item.count * invoice_item.price AS celkem " .
+		"FROM item, invoice_item " .
+		"ON item.id == invoice_item.id_item " .
+		"WHERE invoice_item.id_invoice == ?") ||
 			die "cannot prepare";
 	$data->execute($invoice);
-	while (my $polozka = $data->fetchrow_hashref) {
-	#	print Dumper($polozka);
+	while (my $item = $data->fetchrow_hashref) {
+	#	print Dumper($item);
 		my @one_copy = @one;
-		my $nazev = $$polozka{'nazev'};
-		if (defined $$polozka{'poznamka'}) {
-			$nazev .= ", " . $$polozka{'poznamka'};
+		my $name = $$item{'name'};
+		if (defined $$item{'note'}) {
+			$name .= ", " . $$item{'note'};
 		}
 		if ($one_invoice) {
 			foreach (@one_copy) {
-				s/\@POLOZKA\@/$nazev/;
-				s/\@PMN\@/$$polozka{'pocet'}/;
-				s/\@JCENA\@/$$polozka{'cena'}/;
-				s/\@PCENA\@/$$polozka{'celkem'}/;
+				s/\@POLOZKA\@/$name/;
+				s/\@PMN\@/$$item{'count'}/;
+				s/\@JCENA\@/$$item{'price'}/;
+				s/\@PCENA\@/$$item{'celkem'}/;
 				print OUT;
 			}
 		} else {
-			printf("    %-75s %4d * %6.2f = %6.2f\n" ,$nazev,
-				$$polozka{'pocet'}, $$polozka{'cena'},
-				$$polozka{'celkem'});
+			printf("    %-75s %4d * %6.2f = %6.2f\n" ,$name,
+				$$item{'count'}, $$item{'price'},
+				$$item{'celkem'});
 		}
-		$celkem += $$polozka{'celkem'};
+		$celkem += $$item{'celkem'};
 	}
 	$data->finish;
 
 	return $celkem;
 }
 
-my $data = $dbh->prepare("SELECT faktura.id, printf('%.10d', faktura.id) var, " .
-	"strftime('%d. %m. %Y', faktura.vystaveni, 'unixepoch', 'localtime') vystaveni, " .
-	"strftime('%d. %m. %Y', faktura.splatnost, 'unixepoch', 'localtime') splatnost, " .
-	"prijemce.* FROM faktura, prijemce ON faktura.prijemce == prijemce.ic " .
-	($one_invoice ? "WHERE faktura.id == ?" : "")) || die "cannot prepare";
+my $data = $dbh->prepare("SELECT invoice.id, printf('%.10d', invoice.id) var, " .
+	"strftime('%d. %m. %Y', invoice.issuance, 'unixepoch', 'localtime') issuance, " .
+	"strftime('%d. %m. %Y', invoice.due, 'unixepoch', 'localtime') due, " .
+	"receiver.* FROM invoice, receiver ON invoice.receiver == receiver.ic " .
+	($one_invoice ? "WHERE invoice.id == ?" : "")) || die "cannot prepare";
 
 if (!$one_invoice) {
 	$data->execute() || die 'cannot execute';
 	while (my $invoice = $data->fetchrow_hashref) {
-		print "ID($$invoice{'id'}) V($$invoice{'vystaveni'}) ",
-			"S($$invoice{'splatnost'}) RCV($$invoice{'nazev'})\n";
+		print "ID($$invoice{'id'}) V($$invoice{'issuance'}) ",
+			"S($$invoice{'due'}) RCV($$invoice{'name'})\n";
 		dump_items($$invoice{'id'});
 	}
 
@@ -105,26 +105,26 @@ my @begin = splice(@tex, 0, $beg_idx);
 my @end = @tex;
 
 $data->execute($cislo_faktury) || die 'cannot execute';
-my $faktura = $data->fetchrow_hashref;
-if (!defined $faktura) {
+my $invoice = $data->fetchrow_hashref;
+if (!defined $invoice) {
 	$dbh->disconnect;
 	die 'no invoice of that number';
 }
-#print Dumper($faktura);
+#print Dumper($invoice);
 $data->finish;
 
 open(OUT, ">$out") || die "cannot open $out";
 
 foreach (@begin) {
-	s/\@FAKTURA\@/$$faktura{'id'}/;
-	s/\@VARIABILNI\@/$$faktura{'var'}/;
-	s/\@VYSTAVENI\@/$$faktura{'vystaveni'}/;
-	s/\@SPLATNOST\@/$$faktura{'splatnost'}/;
-	s/\@PRIJEMCENAZEV\@/$$faktura{'nazev'}/;
-	s/\@PRIJEMCEADR1\@/$$faktura{'ulice'}/;
-	s/\@PRIJEMCEADR2\@/$$faktura{'mesto'}/;
-	s/\@PRIJEMCEADR3\@/$$faktura{'psc'}/;
-	s/\@PRIJEMCEIC\@/$$faktura{'ic'}/;
+	s/\@FAKTURA\@/$$invoice{'id'}/;
+	s/\@VARIABILNI\@/$$invoice{'var'}/;
+	s/\@VYSTAVENI\@/$$invoice{'issuance'}/;
+	s/\@SPLATNOST\@/$$invoice{'due'}/;
+	s/\@PRIJEMCENAZEV\@/$$invoice{'name'}/;
+	s/\@PRIJEMCEADR1\@/$$invoice{'street'}/;
+	s/\@PRIJEMCEADR2\@/$$invoice{'city'}/;
+	s/\@PRIJEMCEADR3\@/$$invoice{'zip'}/;
+	s/\@PRIJEMCEIC\@/$$invoice{'ic'}/;
 	print OUT;
 }
 my $celkem = dump_items($cislo_faktury);

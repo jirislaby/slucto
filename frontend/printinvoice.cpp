@@ -9,10 +9,10 @@ PrintInvoice::PrintInvoice(QWidget *parent) :
     ui(new Ui::PrintInvoice)
 {
     ui->setupUi(this);
-    model.setQuery("SELECT faktura.id, prijemce.nazev, "
-                   "strftime('%d. %m. %Y', faktura.vystaveni, 'unixepoch', 'localtime') vystaveni, "
-                   "strftime('%d. %m. %Y', faktura.splatnost, 'unixepoch', 'localtime') splatnost "
-                   "FROM faktura, prijemce ON faktura.prijemce = prijemce.ic");
+    model.setQuery("SELECT invoice.id, receiver.name, "
+                   "strftime('%d. %m. %Y', invoice.issuance, 'unixepoch', 'localtime') issuance, "
+                   "strftime('%d. %m. %Y', invoice.due, 'unixepoch', 'localtime') due "
+                   "FROM invoice, receiver ON invoice.receiver = receiver.ic");
     model.setHeaderData(0, Qt::Horizontal, "Číslo");
     model.setHeaderData(1, Qt::Horizontal, "Příjemce");
     model.setHeaderData(2, Qt::Horizontal, "Datum vystavení");

@@ -11,9 +11,9 @@ NewInvoice::NewInvoice(QWidget *parent) :
 
     buttonsEnable();
 
-    rcvModel.setTable("prijemce");
+    rcvModel.setTable("receiver");
     rcvModel.select();
-    itmModel.setTable("polozka");
+    itmModel.setTable("item");
     itmModel.select();
 
     rcvModel.setHeaderData(0, Qt::Horizontal, "IČ");
