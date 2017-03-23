@@ -26,12 +26,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
     picker.cpp \
     printinvoice.cpp \
-    newinvoice.cpp
+    newinvoice.cpp \
+    itemmodel.cpp
 
 HEADERS  += \
     picker.h \
     printinvoice.h \
-    newinvoice.h
+    newinvoice.h \
+    itemmodel.h
 
 FORMS    += \
     picker.ui \

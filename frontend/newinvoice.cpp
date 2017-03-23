@@ -47,6 +47,11 @@ void NewInvoice::buttonsEnable()
     ui->fwdButton->setDisabled(idx == ui->tabWidget->count() - 1);
 }
 
+void NewInvoice::currentChanged()
+{
+    buttonsEnable();
+}
+
 void NewInvoice::prev()
 {
     int idx = ui->tabWidget->currentIndex();

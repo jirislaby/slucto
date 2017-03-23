@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QtSql>
 
+#include "itemmodel.h"
+
 namespace Ui {
 class NewInvoice;
 }
@@ -17,13 +19,14 @@ public:
     ~NewInvoice();
 
 private slots:
+    void currentChanged();
     void prev();
     void next();
 
 private:
     Ui::NewInvoice *ui;
     QSqlTableModel rcvModel;
-    QSqlTableModel itmModel;
+    ItemModel itmModel;
 
     void buttonsEnable();
 };
