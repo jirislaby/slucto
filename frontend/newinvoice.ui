@@ -42,9 +42,6 @@
           <property name="horizontalScrollMode">
            <enum>QAbstractItemView::ScrollPerPixel</enum>
           </property>
-          <attribute name="horizontalHeaderDefaultSectionSize">
-           <number>200</number>
-          </attribute>
           <attribute name="horizontalHeaderStretchLastSection">
            <bool>true</bool>
           </attribute>
@@ -79,9 +76,6 @@
           <property name="horizontalScrollMode">
            <enum>QAbstractItemView::ScrollPerPixel</enum>
           </property>
-          <attribute name="horizontalHeaderDefaultSectionSize">
-           <number>200</number>
-          </attribute>
           <attribute name="horizontalHeaderStretchLastSection">
            <bool>true</bool>
           </attribute>
@@ -266,7 +260,11 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <item>
-            <widget class="QTableView" name="sumItemView"/>
+            <widget class="QTableView" name="sumItemView">
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
+            </widget>
            </item>
           </layout>
          </widget>

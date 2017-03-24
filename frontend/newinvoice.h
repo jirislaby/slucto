@@ -2,7 +2,6 @@
 #define NEWINVOICE_H
 
 #include <QMainWindow>
-//#include <QStandardItemModel>
 #include <QtSql>
 
 #include "itemmodel.h"
@@ -30,7 +29,6 @@ private:
     QSqlTableModel rcvModel;
     ItemModel itmModel;
     QSqlRelationalTableModel relModel;
-//    QStandardItemModel sumItmModel;
 
     void buttonsEnable();
 };

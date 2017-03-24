@@ -6,17 +6,21 @@
 NewInvoice::NewInvoice(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::NewInvoice)
-//  ,     sumItmModel(0, 4)
 {
     ui->setupUi(this);
 
     buttonsEnable();
 
     rcvModel.setTable("receiver");
+    rcvModel.setSort(rcvModel.fieldIndex("name"), Qt::AscendingOrder);
     rcvModel.select();
     itmModel.setTable("item");
     itmModel.select();
+    relModel.setEditStrategy(QSqlRelationalTableModel::OnManualSubmit);
     relModel.setTable("invoice_item");
+    relModel.setRelation(relModel.fieldIndex("id_item"),
+                         QSqlRelation("item", "id", "name"));
+    relModel.setFilter(QString("id_invoice = %1").arg(-1));
     relModel.select();
 
     rcvModel.setHeaderData(0, Qt::Horizontal, "IČ");
@@ -25,11 +29,11 @@ NewInvoice::NewInvoice(QWidget *parent) :
     rcvModel.setHeaderData(3, Qt::Horizontal, "Město");
     rcvModel.setHeaderData(4, Qt::Horizontal, "PSČ");
 
-    itmModel.removeColumn(0);
-    itmModel.setHeaderData(0, Qt::Horizontal, "Název");
-    itmModel.setHeaderData(1, Qt::Horizontal, "Cena");
+    rcvModel.setSort(1, Qt::AscendingOrder);
+    itmModel.setHeaderData(1, Qt::Horizontal, "Název");
+    itmModel.setHeaderData(2, Qt::Horizontal, "Cena");
 
-    const int first = 2;
+    const int first = 3;
     itmModel.setFirst(first);
     itmModel.insertColumn(first);
     itmModel.setHeaderData(first, Qt::Horizontal, "Počet");
@@ -38,8 +42,8 @@ NewInvoice::NewInvoice(QWidget *parent) :
 
     relModel.setHeaderData(0, Qt::Horizontal, "ID");
     relModel.setHeaderData(1, Qt::Horizontal, "Název");
-    relModel.setHeaderData(2, Qt::Horizontal, "Cena");
-    relModel.setHeaderData(3, Qt::Horizontal, "Počet");
+    relModel.setHeaderData(2, Qt::Horizontal, "Počet");
+    relModel.setHeaderData(3, Qt::Horizontal, "Cena");
     relModel.setHeaderData(4, Qt::Horizontal, "Poznámka");
 
 /*    sumItmModel.setHeaderData(0, Qt::Horizontal, "Název");
@@ -49,6 +53,7 @@ NewInvoice::NewInvoice(QWidget *parent) :
 */
     ui->rcvView->setModel(&rcvModel);
     ui->itmView->setModel(&itmModel);
+    ui->itmView->setColumnHidden(0, true);
     //ui->sumItemView->setModel(&sumItmModel);
  //   ui->sumItemView->setModel(&itmModel);
     ui->sumItemView->setModel(&relModel);
@@ -86,8 +91,7 @@ void NewInvoice::currentChanged()
         if (!selModel || !selModel->selectedRows().count())
             return;
         int row = selModel->selectedRows()[0].row();
-        const QSqlRecord &rec = rcvModel.record(row);
-        int receiver = rec.value("ic").toInt();
+        const QSqlRecord rec = rcvModel.record(row);
         ui->ICEdit->setText(rec.value("ic").toString());
         ui->nameEdit->setText(rec.value("name").toString());
         ui->cityEdit->setText(rec.value("city").toString());
@@ -109,44 +113,31 @@ void NewInvoice::currentChanged()
         ui->invNOBox->setValue(id);
         ui->invVSEdit->setText(QString::number(id));
 
-        query.prepare("INSERT OR IGNORE INTO invoice "
-                      "(id, receiver, issuance, due) VALUES "
-                      "(:id, :rcv, :iss, :due)");
-        query.bindValue(":id", id);
-        query.bindValue(":rcv", receiver);
-        query.bindValue(":iss", QDateTime(curr).toLocalTime());
-        query.bindValue(":due", QDateTime(curr.addDays(14)).toLocalTime());
-        query.exec();
-        query.prepare("INSERT OR REPLACE INTO invoice_item "
-                      "(id_invoice, id_item, count, price, note) VALUES "
-                      "(:inv, :itm, :cnt, :pr, :nt)");
-        query.bindValue(":inv", id);
-        query.bindValue(":itm", 0);
-        query.bindValue(":cnt", 0);
-        query.bindValue(":pr", 0);
-        query.bindValue(":note", "");
-        query.exec();
-        relModel.setFilter(QString("id_invoice=%1").arg(id));
-#if 0
-        //itmModel.setFilter("");
-        sumItmModel.setRowCount(0);
+        relModel.setFilter(QString("id_invoice = %1").arg(id));
+
         QVector<int> cnts = itmModel.getCounts();
-        for (int i = 0, row = 0; i < cnts.count(); i++)  {
+        for (int i = 0; i < cnts.count(); i++)  {
             if (!cnts[i])
                 continue;
-            qDebug() << cnts[i];
 
-            sumItmModel.insertRow(row);
-            itmModel.filter()
-            const QSqlRecord &rec = itmModel.record(row);
-            sumItmModel.setItem(row, 0, new QStandardItem(rec.value("name").toString()));
-            sumItmModel.setItem(row, 1, new QStandardItem(rec.value("price").toString()));
-            sumItmModel.setItem(row, 2, new QStandardItem(QString::number(cnts[i])));
-            sumItmModel.setItem(row, 3, new QStandardItem(itmModel.getComment(i)));
-            row++;
+            QSqlRecord itemRec = itmModel.record(i);
+            QSqlRecord rec = relModel.record();
+            rec.setValue("id_invoice", id);
+            rec.setValue("id_item", itemRec.value("id").toInt());
+            rec.setValue("name", itemRec.value("id").toString());
+            rec.setValue("count", cnts[i]);
+            rec.setValue("price", itemRec.value("price").toDouble());
+            rec.setValue("note", itmModel.getComment(i));
+            if (!relModel.insertRecord(-1, rec)) {
+                qWarning() << relModel.lastError();
+                break;
+            }
         }
-#endif
         ui->sumItemView->resizeColumnsToContents();
+        ui->sumItemView->setColumnWidth(2, ui->sumItemView->columnWidth(2) + 20);
+    } else {
+        relModel.revertAll();
+//      relModel.setFilter(QString());
     }
 }
 

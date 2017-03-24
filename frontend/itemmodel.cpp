@@ -35,8 +35,10 @@ bool ItemModel::setData(const QModelIndex &index, const QVariant &value,
     if (index.column() < first || role != Qt::EditRole)
         return QSqlTableModel::setData(index, value, role);
 
-    counts.resize(index.row() + 1);
-    comments.resize(index.row() + 1);
+    if (index.row() >= counts.count()) {
+        counts.resize(index.row() + 1);
+        comments.resize(index.row() + 1);
+    }
 
     int col = index.column();
     if (col == first) {

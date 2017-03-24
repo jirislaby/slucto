@@ -12,7 +12,8 @@ PrintInvoice::PrintInvoice(QWidget *parent) :
     model.setQuery("SELECT invoice.id, receiver.name, "
                    "strftime('%d. %m. %Y', invoice.issuance, 'unixepoch', 'localtime') issuance, "
                    "strftime('%d. %m. %Y', invoice.due, 'unixepoch', 'localtime') due "
-                   "FROM invoice, receiver ON invoice.receiver = receiver.ic");
+                   "FROM invoice, receiver ON invoice.receiver = receiver.ic "
+                   "ORDER BY invoice.id");
     model.setHeaderData(0, Qt::Horizontal, "Číslo");
     model.setHeaderData(1, Qt::Horizontal, "Příjemce");
     model.setHeaderData(2, Qt::Horizontal, "Datum vystavení");
