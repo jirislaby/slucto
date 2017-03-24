@@ -87,6 +87,7 @@ void NewInvoice::currentChanged()
             return;
         int row = selModel->selectedRows()[0].row();
         const QSqlRecord &rec = rcvModel.record(row);
+        int receiver = rec.value("ic").toInt();
         ui->ICEdit->setText(rec.value("ic").toString());
         ui->nameEdit->setText(rec.value("name").toString());
         ui->cityEdit->setText(rec.value("city").toString());
@@ -108,6 +109,23 @@ void NewInvoice::currentChanged()
         ui->invNOBox->setValue(id);
         ui->invVSEdit->setText(QString::number(id));
 
+        query.prepare("INSERT OR IGNORE INTO invoice "
+                      "(id, receiver, issuance, due) VALUES "
+                      "(:id, :rcv, :iss, :due)");
+        query.bindValue(":id", id);
+        query.bindValue(":rcv", receiver);
+        query.bindValue(":iss", QDateTime(curr).toLocalTime());
+        query.bindValue(":due", QDateTime(curr.addDays(14)).toLocalTime());
+        query.exec();
+        query.prepare("INSERT OR REPLACE INTO invoice_item "
+                      "(id_invoice, id_item, count, price, note) VALUES "
+                      "(:inv, :itm, :cnt, :pr, :nt)");
+        query.bindValue(":inv", id);
+        query.bindValue(":itm", 0);
+        query.bindValue(":cnt", 0);
+        query.bindValue(":pr", 0);
+        query.bindValue(":note", "");
+        query.exec();
         relModel.setFilter(QString("id_invoice=%1").arg(id));
 #if 0
         //itmModel.setFilter("");
