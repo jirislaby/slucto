@@ -21,7 +21,7 @@
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tab_rcv">
        <attribute name="title">
@@ -50,6 +50,20 @@
           </attribute>
          </widget>
         </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QLabel" name="filtRcvLabel">
+            <property name="text">
+             <string>Filtr:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="filtRcvEdit"/>
+          </item>
+         </layout>
+        </item>
        </layout>
       </widget>
       <widget class="QWidget" name="tab_items">
@@ -73,12 +87,180 @@
           </attribute>
          </widget>
         </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QLabel" name="filtItmLabel">
+            <property name="text">
+             <string>Filtr:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="filtItmEdit"/>
+          </item>
+         </layout>
+        </item>
        </layout>
       </widget>
       <widget class="QWidget" name="tab_sum">
        <attribute name="title">
         <string>Shrnutí</string>
        </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QGroupBox" name="groupBox_2">
+            <property name="title">
+             <string>Faktura</string>
+            </property>
+            <layout class="QFormLayout" name="formLayout">
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="invNOEdit">
+               <property name="frame">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_6">
+               <property name="text">
+                <string>Číslo</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_7">
+               <property name="text">
+                <string>VS</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLineEdit" name="invVSEdit"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox">
+            <property name="title">
+             <string>Data</string>
+            </property>
+            <layout class="QFormLayout" name="formLayout_3">
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_2">
+               <property name="text">
+                <string>Vystavení</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QDateEdit" name="issEdit">
+               <property name="displayFormat">
+                <string>dd.MM.yyyy</string>
+               </property>
+               <property name="calendarPopup">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label">
+               <property name="text">
+                <string>Splatnosti</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QDateEdit" name="dueEdit">
+               <property name="displayFormat">
+                <string>dd.MM.yyyy</string>
+               </property>
+               <property name="calendarPopup">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="rcvGroupBox">
+            <property name="title">
+             <string>Příjemce</string>
+            </property>
+            <layout class="QFormLayout" name="formLayout_2">
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_3">
+               <property name="text">
+                <string>IČ</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_4">
+               <property name="text">
+                <string>Název</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLineEdit" name="nameEdit">
+               <property name="frame">
+                <bool>true</bool>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="label_5">
+               <property name="text">
+                <string>Město</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QLineEdit" name="cityEdit">
+               <property name="frame">
+                <bool>true</bool>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="ICEdit">
+               <property name="frame">
+                <bool>true</bool>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="itmGroupBox">
+          <property name="title">
+           <string>Položky</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_5">
+           <item>
+            <widget class="QTableView" name="sumItemView"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
@@ -193,6 +375,22 @@
     <hint type="destinationlabel">
      <x>176</x>
      <y>2</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rcvView</sender>
+   <signal>doubleClicked(QModelIndex)</signal>
+   <receiver>NewInvoice</receiver>
+   <slot>next()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>188</x>
+     <y>378</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>187</x>
+     <y>510</y>
     </hint>
    </hints>
   </connection>
