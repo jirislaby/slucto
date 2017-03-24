@@ -6,6 +6,7 @@
 NewInvoice::NewInvoice(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::NewInvoice)
+//  ,     sumItmModel(0, 4)
 {
     ui->setupUi(this);
 
@@ -15,6 +16,8 @@ NewInvoice::NewInvoice(QWidget *parent) :
     rcvModel.select();
     itmModel.setTable("item");
     itmModel.select();
+    relModel.setTable("invoice_item");
+    relModel.select();
 
     rcvModel.setHeaderData(0, Qt::Horizontal, "IČ");
     rcvModel.setHeaderData(1, Qt::Horizontal, "Název");
@@ -22,27 +25,48 @@ NewInvoice::NewInvoice(QWidget *parent) :
     rcvModel.setHeaderData(3, Qt::Horizontal, "Město");
     rcvModel.setHeaderData(4, Qt::Horizontal, "PSČ");
 
-    itmModel.setHeaderData(0, Qt::Horizontal, "ID");
-    itmModel.setHeaderData(1, Qt::Horizontal, "Název");
-    itmModel.setHeaderData(2, Qt::Horizontal, "Cena");
+    itmModel.removeColumn(0);
+    itmModel.setHeaderData(0, Qt::Horizontal, "Název");
+    itmModel.setHeaderData(1, Qt::Horizontal, "Cena");
 
-    itmModel.insertColumn(3);
-    itmModel.setHeaderData(3, Qt::Horizontal, "Počet");
-    itmModel.insertColumn(4);
-    itmModel.setHeaderData(4, Qt::Horizontal, "Poznámka");
+    const int first = 2;
+    itmModel.setFirst(first);
+    itmModel.insertColumn(first);
+    itmModel.setHeaderData(first, Qt::Horizontal, "Počet");
+    itmModel.insertColumn(first + 1);
+    itmModel.setHeaderData(first + 1, Qt::Horizontal, "Poznámka");
 
+    relModel.setHeaderData(0, Qt::Horizontal, "ID");
+    relModel.setHeaderData(1, Qt::Horizontal, "Název");
+    relModel.setHeaderData(2, Qt::Horizontal, "Cena");
+    relModel.setHeaderData(3, Qt::Horizontal, "Počet");
+    relModel.setHeaderData(4, Qt::Horizontal, "Poznámka");
+
+/*    sumItmModel.setHeaderData(0, Qt::Horizontal, "Název");
+    sumItmModel.setHeaderData(1, Qt::Horizontal, "Cena");
+    sumItmModel.setHeaderData(2, Qt::Horizontal, "Počet");
+    sumItmModel.setHeaderData(3, Qt::Horizontal, "Poznámka");
+*/
     ui->rcvView->setModel(&rcvModel);
     ui->itmView->setModel(&itmModel);
+    //ui->sumItemView->setModel(&sumItmModel);
+ //   ui->sumItemView->setModel(&itmModel);
+    ui->sumItemView->setModel(&relModel);
 
     ui->rcvView->resizeColumnsToContents();
-    for (int c = 0; c < 4; c++)
+    for (int c = 0; c <= first; c++)
         ui->itmView->resizeColumnToContents(c);
-    ui->itmView->setColumnWidth(3, ui->itmView->columnWidth(3) + 20);
+    ui->itmView->setColumnWidth(first, ui->itmView->columnWidth(first) + 20);
 }
 
 NewInvoice::~NewInvoice()
 {
     delete ui;
+}
+
+void NewInvoice::copyToVS()
+{
+    ui->invVSEdit->setText(QString::number(ui->invNOBox->value()));
 }
 
 void NewInvoice::buttonsEnable()
@@ -61,10 +85,8 @@ void NewInvoice::currentChanged()
         const QItemSelectionModel *selModel = ui->rcvView->selectionModel();
         if (!selModel || !selModel->selectedRows().count())
             return;
-        const QModelIndex idx = selModel->selectedRows()[0];
-        const QSqlTableModel *tabModel =
-                dynamic_cast<const QSqlTableModel *>(idx.model());
-        const QSqlRecord &rec = tabModel->record(idx.row());
+        int row = selModel->selectedRows()[0].row();
+        const QSqlRecord &rec = rcvModel.record(row);
         ui->ICEdit->setText(rec.value("ic").toString());
         ui->nameEdit->setText(rec.value("name").toString());
         ui->cityEdit->setText(rec.value("city").toString());
@@ -79,14 +101,34 @@ void NewInvoice::currentChanged()
         int id = curr.year() * 100000 + curr.month() * 1000 + 1;
         query.bindValue(":min", id);
         query.bindValue(":max", id + 998);
-        qDebug() << id << id + 998 << query.lastError();
         query.exec();
         while (query.next()) {
             id = query.value(0).toInt();
         }
-        qDebug() << id;
-        ui->invNOEdit->setText(QString::number(id));
+        ui->invNOBox->setValue(id);
         ui->invVSEdit->setText(QString::number(id));
+
+        relModel.setFilter(QString("id_invoice=%1").arg(id));
+#if 0
+        //itmModel.setFilter("");
+        sumItmModel.setRowCount(0);
+        QVector<int> cnts = itmModel.getCounts();
+        for (int i = 0, row = 0; i < cnts.count(); i++)  {
+            if (!cnts[i])
+                continue;
+            qDebug() << cnts[i];
+
+            sumItmModel.insertRow(row);
+            itmModel.filter()
+            const QSqlRecord &rec = itmModel.record(row);
+            sumItmModel.setItem(row, 0, new QStandardItem(rec.value("name").toString()));
+            sumItmModel.setItem(row, 1, new QStandardItem(rec.value("price").toString()));
+            sumItmModel.setItem(row, 2, new QStandardItem(QString::number(cnts[i])));
+            sumItmModel.setItem(row, 3, new QStandardItem(itmModel.getComment(i)));
+            row++;
+        }
+#endif
+        ui->sumItemView->resizeColumnsToContents();
     }
 }
 

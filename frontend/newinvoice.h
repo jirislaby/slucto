@@ -2,6 +2,7 @@
 #define NEWINVOICE_H
 
 #include <QMainWindow>
+//#include <QStandardItemModel>
 #include <QtSql>
 
 #include "itemmodel.h"
@@ -19,6 +20,7 @@ public:
     ~NewInvoice();
 
 private slots:
+    void copyToVS();
     void currentChanged();
     void prev();
     void next();
@@ -27,6 +29,8 @@ private:
     Ui::NewInvoice *ui;
     QSqlTableModel rcvModel;
     ItemModel itmModel;
+    QSqlRelationalTableModel relModel;
+//    QStandardItemModel sumItmModel;
 
     void buttonsEnable();
 };
