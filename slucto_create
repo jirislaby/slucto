@@ -35,6 +35,8 @@ $dbh->do("CREATE TABLE receiver(ic INTEGER PRIMARY KEY, " .
 	"city STRING NOT NULL, " .
 	"zip STRING NOT NULL)");
 
+$dbh->do("CREATE INDEX receiver_name ON receiver(name ASC)");
+
 $dbh->do("CREATE TABLE invoice(id INTEGER PRIMARY KEY, " .
 	"receiver INTEGER NOT NULL, " .
 	"issuance INTEGER NOT NULL, due INTEGER NOT NULL, " .
@@ -42,6 +44,8 @@ $dbh->do("CREATE TABLE invoice(id INTEGER PRIMARY KEY, " .
 
 $dbh->do("CREATE TABLE item(id INTEGER PRIMARY KEY, " .
 	"name STRING NOT NULL UNIQUE, price REAL)");
+
+$dbh->do("CREATE INDEX item_name ON item(name ASC)");
 
 $dbh->do("CREATE TABLE invoice_item(id_invoice INTEGER NOT NULL, " .
 		"id_item INTEGER NOT NULL, count INTEGER NOT NULL, " .
