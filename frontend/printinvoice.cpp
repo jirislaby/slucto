@@ -19,6 +19,7 @@ PrintInvoice::PrintInvoice(QWidget *parent) :
     model.setHeaderData(2, Qt::Horizontal, "Datum vystavení");
     model.setHeaderData(3, Qt::Horizontal, "Datum splatnosti");
     ui->invView->setModel(&model);
+    ui->invView->resizeColumnsToContents();
 }
 
 PrintInvoice::~PrintInvoice()
