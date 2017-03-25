@@ -132,7 +132,6 @@ void NewInvoice::currentChanged()
 void NewInvoice::prev()
 {
     int idx = ui->tabWidget->currentIndex();
-//  qDebug() << __func__ << idx;
     ui->tabWidget->setCurrentIndex(idx - 1);
     buttonsEnable();
 }
@@ -140,7 +139,6 @@ void NewInvoice::prev()
 void NewInvoice::next()
 {
     int idx = ui->tabWidget->currentIndex();
-//  qDebug() << __func__ << idx;
     ui->tabWidget->setCurrentIndex(idx + 1);
     buttonsEnable();
 }
@@ -151,13 +149,21 @@ void NewInvoice::newRcv()
         qWarning() << "cannot create row" << rcvModel.lastError();
 }
 
+static void setFilter(QSqlTableModel &model, const QString &str)
+{
+    if (str.length() && !str.contains('\'')) {
+        /* SQL injection */
+        model.setFilter(QString("name LIKE '\%%1\%'").arg(str));
+    } else
+        model.setFilter(QString());
+}
+
 void NewInvoice::filterRcv(QString str)
 {
-    if (str.length()) {
-        /* SQL injection */
-        rcvModel.setFilter(QString("name LIKE '\%%1\%'").arg(str));
-    } else
-        rcvModel.setFilter(QString());
+    if (ui->tabWidget->currentWidget() == ui->tab_rcv)
+        setFilter(rcvModel, str);
+    else
+        setFilter(itmModel, str);
 }
 
 void NewInvoice::copyToVS()

@@ -21,7 +21,7 @@
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_rcv">
        <attribute name="title">
@@ -455,6 +455,22 @@
     <hint type="destinationlabel">
      <x>100</x>
      <y>502</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>filtItmEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>NewInvoice</receiver>
+   <slot>filterRcv(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>134</x>
+     <y>476</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>122</x>
+     <y>512</y>
     </hint>
    </hints>
   </connection>
