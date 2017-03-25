@@ -147,8 +147,17 @@ void NewInvoice::next()
 
 void NewInvoice::newRcv()
 {
-    if (!rcvModel.insertRow(-1))
+    if (!rcvModel.insertRow(rcvModel.rowCount()))
         qWarning() << "cannot create row" << rcvModel.lastError();
+}
+
+void NewInvoice::filterRcv(QString str)
+{
+    if (str.length()) {
+        /* SQL injection */
+        rcvModel.setFilter(QString("name LIKE '\%%1\%'").arg(str));
+    } else
+        rcvModel.setFilter(QString());
 }
 
 void NewInvoice::copyToVS()

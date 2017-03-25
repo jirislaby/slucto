@@ -427,22 +427,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>rcvView</sender>
-   <signal>doubleClicked(QModelIndex)</signal>
-   <receiver>NewInvoice</receiver>
-   <slot>next()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>148</x>
-     <y>356</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>136</x>
-     <y>501</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>newRcvButton</sender>
    <signal>clicked()</signal>
    <receiver>NewInvoice</receiver>
@@ -458,6 +442,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>filtRcvEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>NewInvoice</receiver>
+   <slot>filterRcv(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>186</x>
+     <y>474</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>100</x>
+     <y>502</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>prev()</slot>
@@ -465,5 +465,6 @@
   <slot>currentChanged()</slot>
   <slot>copyToVS()</slot>
   <slot>newRcv()</slot>
+  <slot>filterRcv(QString)</slot>
  </slots>
 </ui>

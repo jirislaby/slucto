@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QtSql>
+#include <QString>
 
 #include "itemmodel.h"
 
@@ -26,6 +27,7 @@ private slots:
     void next();
 
     void newRcv();
+    void filterRcv(QString);
 
     void copyToVS();
 
