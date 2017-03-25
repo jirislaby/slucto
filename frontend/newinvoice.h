@@ -19,10 +19,15 @@ public:
     ~NewInvoice();
 
 private slots:
-    void copyToVS();
+    void setupModels();
+
     void currentChanged();
     void prev();
     void next();
+
+    void newRcv();
+
+    void copyToVS();
 
 private:
     Ui::NewInvoice *ui;

@@ -30,9 +30,6 @@
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <widget class="QTableView" name="rcvView">
-          <property name="editTriggers">
-           <set>QAbstractItemView::NoEditTriggers</set>
-          </property>
           <property name="selectionMode">
            <enum>QAbstractItemView::ExtendedSelection</enum>
           </property>
@@ -58,6 +55,13 @@
           </item>
           <item>
            <widget class="QLineEdit" name="filtRcvEdit"/>
+          </item>
+          <item>
+           <widget class="QPushButton" name="newRcvButton">
+            <property name="text">
+             <string>Nový příjemce</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -407,22 +411,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>rcvView</sender>
-   <signal>doubleClicked(QModelIndex)</signal>
-   <receiver>NewInvoice</receiver>
-   <slot>next()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>188</x>
-     <y>378</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>187</x>
-     <y>510</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>pushButton</sender>
    <signal>clicked()</signal>
    <receiver>NewInvoice</receiver>
@@ -438,11 +426,44 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>rcvView</sender>
+   <signal>doubleClicked(QModelIndex)</signal>
+   <receiver>NewInvoice</receiver>
+   <slot>next()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>148</x>
+     <y>356</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>136</x>
+     <y>501</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>newRcvButton</sender>
+   <signal>clicked()</signal>
+   <receiver>NewInvoice</receiver>
+   <slot>newRcv()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>599</x>
+     <y>472</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>670</x>
+     <y>398</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>prev()</slot>
   <slot>next()</slot>
   <slot>currentChanged()</slot>
   <slot>copyToVS()</slot>
+  <slot>newRcv()</slot>
  </slots>
 </ui>

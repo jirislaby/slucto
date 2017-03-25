@@ -10,68 +10,56 @@ NewInvoice::NewInvoice(QWidget *parent) :
     ui->setupUi(this);
 
     buttonsEnable();
+    setupModels();
+}
 
+void NewInvoice::setupModels()
+{
     rcvModel.setTable("receiver");
     rcvModel.setSort(rcvModel.fieldIndex("name"), Qt::AscendingOrder);
     rcvModel.select();
-    itmModel.setTable("item");
-    itmModel.select();
-    relModel.setEditStrategy(QSqlRelationalTableModel::OnManualSubmit);
-    relModel.setTable("invoice_item");
-    relModel.setRelation(relModel.fieldIndex("id_item"),
-                         QSqlRelation("item", "id", "name"));
-    relModel.setFilter(QString("id_invoice = %1").arg(-1));
-    relModel.select();
-
     rcvModel.setHeaderData(0, Qt::Horizontal, "IČ");
     rcvModel.setHeaderData(1, Qt::Horizontal, "Název");
     rcvModel.setHeaderData(2, Qt::Horizontal, "Ulice");
     rcvModel.setHeaderData(3, Qt::Horizontal, "Město");
     rcvModel.setHeaderData(4, Qt::Horizontal, "PSČ");
+    ui->rcvView->setModel(&rcvModel);
+    ui->rcvView->resizeColumnsToContents();
 
-    rcvModel.setSort(1, Qt::AscendingOrder);
+    itmModel.setTable("item");
+    itmModel.select();
+    itmModel.setSort(1, Qt::AscendingOrder);
     itmModel.setHeaderData(1, Qt::Horizontal, "Název");
     itmModel.setHeaderData(2, Qt::Horizontal, "Cena");
-
     const int first = 3;
     itmModel.setFirst(first);
     itmModel.insertColumn(first);
     itmModel.setHeaderData(first, Qt::Horizontal, "Počet");
     itmModel.insertColumn(first + 1);
     itmModel.setHeaderData(first + 1, Qt::Horizontal, "Poznámka");
+    ui->itmView->setColumnHidden(0, true);
+    ui->itmView->setModel(&itmModel);
+    for (int c = 0; c <= first; c++)
+        ui->itmView->resizeColumnToContents(c);
+    ui->itmView->setColumnWidth(first, ui->itmView->columnWidth(first) + 20);
 
+    relModel.setEditStrategy(QSqlRelationalTableModel::OnManualSubmit);
+    relModel.setTable("invoice_item");
+    relModel.setRelation(relModel.fieldIndex("id_item"),
+                         QSqlRelation("item", "id", "name"));
+    relModel.setFilter(QString("id_invoice = %1").arg(-1));
+    relModel.select();
     relModel.setHeaderData(0, Qt::Horizontal, "ID");
     relModel.setHeaderData(1, Qt::Horizontal, "Název");
     relModel.setHeaderData(2, Qt::Horizontal, "Počet");
     relModel.setHeaderData(3, Qt::Horizontal, "Cena");
     relModel.setHeaderData(4, Qt::Horizontal, "Poznámka");
-
-/*    sumItmModel.setHeaderData(0, Qt::Horizontal, "Název");
-    sumItmModel.setHeaderData(1, Qt::Horizontal, "Cena");
-    sumItmModel.setHeaderData(2, Qt::Horizontal, "Počet");
-    sumItmModel.setHeaderData(3, Qt::Horizontal, "Poznámka");
-*/
-    ui->rcvView->setModel(&rcvModel);
-    ui->itmView->setModel(&itmModel);
-    ui->itmView->setColumnHidden(0, true);
-    //ui->sumItemView->setModel(&sumItmModel);
- //   ui->sumItemView->setModel(&itmModel);
     ui->sumItemView->setModel(&relModel);
-
-    ui->rcvView->resizeColumnsToContents();
-    for (int c = 0; c <= first; c++)
-        ui->itmView->resizeColumnToContents(c);
-    ui->itmView->setColumnWidth(first, ui->itmView->columnWidth(first) + 20);
 }
 
 NewInvoice::~NewInvoice()
 {
     delete ui;
-}
-
-void NewInvoice::copyToVS()
-{
-    ui->invVSEdit->setText(QString::number(ui->invNOBox->value()));
 }
 
 void NewInvoice::buttonsEnable()
@@ -155,4 +143,15 @@ void NewInvoice::next()
 //  qDebug() << __func__ << idx;
     ui->tabWidget->setCurrentIndex(idx + 1);
     buttonsEnable();
+}
+
+void NewInvoice::newRcv()
+{
+    if (!rcvModel.insertRow(-1))
+        qWarning() << "cannot create row" << rcvModel.lastError();
+}
+
+void NewInvoice::copyToVS()
+{
+    ui->invVSEdit->setText(QString::number(ui->invNOBox->value()));
 }
