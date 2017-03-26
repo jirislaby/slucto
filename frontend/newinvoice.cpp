@@ -1,4 +1,6 @@
+#include <QApplication>
 #include <QDebug>
+#include <QDesktopWidget>
 
 #include "newinvoice.h"
 #include "ui_newinvoice.h"
@@ -8,6 +10,8 @@ NewInvoice::NewInvoice(QWidget *parent) :
     ui(new Ui::NewInvoice)
 {
     ui->setupUi(this);
+    setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter,
+            size(), qApp->desktop()->availableGeometry()));
 
     buttonsEnable();
     setupModels();

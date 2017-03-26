@@ -1,4 +1,6 @@
+#include <QApplication>
 #include <QDebug>
+#include <QDesktopWidget>
 #include <QMessageBox>
 
 #include "printinvoice.h"
@@ -9,6 +11,9 @@ PrintInvoice::PrintInvoice(QWidget *parent) :
     ui(new Ui::PrintInvoice)
 {
     ui->setupUi(this);
+    setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter,
+            size(), qApp->desktop()->availableGeometry()));
+
     model.setQuery("SELECT invoice.id, receiver.name, "
                    "strftime('%d. %m. %Y', invoice.issuance, 'unixepoch', 'localtime') issuance, "
                    "strftime('%d. %m. %Y', invoice.due, 'unixepoch', 'localtime') due "
