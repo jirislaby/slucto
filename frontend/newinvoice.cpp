@@ -3,6 +3,7 @@
 #include <QDesktopWidget>
 
 #include "newinvoice.h"
+#include "printinvoice.h"
 #include "ui_newinvoice.h"
 
 NewInvoice::NewInvoice(QWidget *parent) :
@@ -79,6 +80,10 @@ void NewInvoice::currentChanged()
     buttonsEnable();
 
     if (ui->tabWidget->currentWidget() == ui->tab_sum) {
+        QDate curr = QDate::currentDate();
+        ui->issEdit->setDate(curr);
+        ui->dueEdit->setDate(curr.addDays(14));
+
         const QItemSelectionModel *selModel = ui->rcvView->selectionModel();
         if (!selModel || !selModel->selectedRows().count())
             return;
@@ -87,10 +92,6 @@ void NewInvoice::currentChanged()
         ui->ICEdit->setText(rec.value("ic").toString());
         ui->nameEdit->setText(rec.value("name").toString());
         ui->cityEdit->setText(rec.value("city").toString());
-
-        QDate curr = QDate::currentDate();
-        ui->issEdit->setDate(curr);
-        ui->dueEdit->setDate(curr.addDays(14));
 
         QSqlQuery query;
         query.prepare("SELECT id + 1 FROM invoice WHERE id BETWEEN :min "
@@ -103,7 +104,6 @@ void NewInvoice::currentChanged()
             id = query.value(0).toInt();
         }
         ui->invNOBox->setValue(id);
-        ui->invVSEdit->setText(QString::number(id));
 
         relModel.setFilter(QString("id_invoice = %1").arg(id));
 
@@ -127,8 +127,10 @@ void NewInvoice::currentChanged()
         }
         ui->sumItemView->resizeColumnsToContents();
         ui->sumItemView->setColumnWidth(2, ui->sumItemView->columnWidth(2) + 20);
+        ui->createInvButton->setEnabled(true);
     } else {
         relModel.revertAll();
+        ui->createInvButton->setEnabled(false);
 //      relModel.setFilter(QString());
     }
 }
@@ -153,6 +155,12 @@ void NewInvoice::newRcv()
         qWarning() << "cannot create row" << rcvModel.lastError();
 }
 
+void NewInvoice::newItm()
+{
+    if (!itmModel.insertRow(itmModel.rowCount()))
+        qWarning() << "cannot create row" << itmModel.lastError();
+}
+
 static void setFilter(QSqlTableModel &model, const QString &str)
 {
     if (str.length() && !str.contains('\'')) {
@@ -170,7 +178,24 @@ void NewInvoice::filterRcv(QString str)
         setFilter(itmModel, str);
 }
 
-void NewInvoice::copyToVS()
+void NewInvoice::createInv()
 {
-    ui->invVSEdit->setText(QString::number(ui->invNOBox->value()));
+    relModel.submitAll();
+    QSqlTableModel invoice;
+    invoice.setTable("invoice");
+    QSqlRecord rec = invoice.record();
+    rec.setValue("id", ui->invNOBox->value());
+    rec.setValue("receiver", ui->ICEdit->text().toInt());
+    rec.setValue("issuance", QDateTime(ui->issEdit->date()).toTime_t());
+    rec.setValue("due", QDateTime(ui->dueEdit->date()).toTime_t());
+    qDebug() << rec;
+    if (invoice.insertRecord(-1, rec))
+        ui->printInvButton->setEnabled(true);
+    else
+        qWarning() << "cannot insert invoice" << invoice.lastError();
+}
+
+void NewInvoice::printInv()
+{
+    PrintInvoice::printInvoice(ui->invNOBox->value());
 }

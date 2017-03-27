@@ -16,6 +16,8 @@ public:
     explicit PrintInvoice(QWidget *parent = 0);
     ~PrintInvoice();
 
+    static void printInvoice(int id);
+
 private slots:
     void printInvoice();
 

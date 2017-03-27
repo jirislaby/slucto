@@ -63,7 +63,7 @@ Qt::ItemFlags ItemModel::flags(const QModelIndex &index) const
 {
     Qt::ItemFlags flags = QSqlTableModel::flags(index);
 
-    if (index.column() >= first)
+    if (index.column() >= first || isDirty(index))
         flags |= Qt::ItemIsEditable;
     else
         flags &= ~Qt::ItemIsEditable;

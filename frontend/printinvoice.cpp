@@ -32,6 +32,14 @@ PrintInvoice::~PrintInvoice()
     delete ui;
 }
 
+void PrintInvoice::printInvoice(int id)
+{
+        QProcess process;
+        process.start("slucto_cli", QStringList() << QString::number(id));
+        process.waitForFinished(-1);
+        qDebug() << "exit code", process.exitCode();
+}
+
 void PrintInvoice::printInvoice()
 {
     QItemSelectionModel *sm = ui->invView->selectionModel();
@@ -40,13 +48,9 @@ void PrintInvoice::printInvoice()
         return;
     }
     for (QModelIndex &i : sm->selectedRows()) {
-        const QSqlQueryModel *sqlModel = dynamic_cast<const QSqlQueryModel *>(i.model());
-        qulonglong id = sqlModel->record(i.row()).value("id").toULongLong();
+        qulonglong id = model.record(i.row()).value("id").toULongLong();
         qDebug() << "row" << i.row() << "id" << id;
 
-        QProcess process;
-        process.start("slucto_cli", QStringList() << QString::number(id));
-        process.waitForFinished(-1);
-        qDebug() << "exit code", process.exitCode();
+        printInvoice(id);
     }
 }

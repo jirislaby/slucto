@@ -29,7 +29,10 @@ private slots:
     void newRcv();
     void filterRcv(QString);
 
-    void copyToVS();
+    void newItm();
+
+    void createInv();
+    void printInv();
 
 private:
     Ui::NewInvoice *ui;

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>675</width>
-    <height>535</height>
+    <width>723</width>
+    <height>540</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tab_rcv">
        <attribute name="title">
@@ -97,6 +97,13 @@
           <item>
            <widget class="QLineEdit" name="filtItmEdit"/>
           </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_2">
+            <property name="text">
+             <string>Nová položka</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
        </layout>
@@ -121,20 +128,6 @@
                </property>
               </widget>
              </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="label_7">
-               <property name="text">
-                <string>VS</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QLineEdit" name="invVSEdit">
-               <property name="inputMethodHints">
-                <set>Qt::ImhDigitsOnly</set>
-               </property>
-              </widget>
-             </item>
              <item row="0" column="1">
               <widget class="QSpinBox" name="invNOBox">
                <property name="maximum">
@@ -142,30 +135,14 @@
                </property>
               </widget>
              </item>
-             <item row="1" column="1">
-              <widget class="QPushButton" name="pushButton">
-               <property name="text">
-                <string>Přenést do VS</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QGroupBox" name="groupBox">
-            <property name="title">
-             <string>Data</string>
-            </property>
-            <layout class="QFormLayout" name="formLayout_3">
-             <item row="0" column="0">
+             <item row="1" column="0">
               <widget class="QLabel" name="label_2">
                <property name="text">
-                <string>Vystavení</string>
+                <string>Datum vystavení</string>
                </property>
               </widget>
              </item>
-             <item row="0" column="1">
+             <item row="1" column="1">
               <widget class="QDateEdit" name="issEdit">
                <property name="displayFormat">
                 <string>dd.MM.yyyy</string>
@@ -175,14 +152,14 @@
                </property>
               </widget>
              </item>
-             <item row="1" column="0">
+             <item row="2" column="0">
               <widget class="QLabel" name="label">
                <property name="text">
-                <string>Splatnosti</string>
+                <string>Datum splatnosti</string>
                </property>
               </widget>
              </item>
-             <item row="1" column="1">
+             <item row="2" column="1">
               <widget class="QDateEdit" name="dueEdit">
                <property name="displayFormat">
                 <string>dd.MM.yyyy</string>
@@ -273,6 +250,36 @@
           </layout>
          </widget>
         </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="0,0">
+          <item>
+           <widget class="QPushButton" name="createInvButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Vytvořit fakturu</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="printInvButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Tisk faktury</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
        </layout>
       </widget>
      </widget>
@@ -332,10 +339,6 @@
   <tabstop>itmView</tabstop>
   <tabstop>filtItmEdit</tabstop>
   <tabstop>invNOBox</tabstop>
-  <tabstop>pushButton</tabstop>
-  <tabstop>invVSEdit</tabstop>
-  <tabstop>issEdit</tabstop>
-  <tabstop>dueEdit</tabstop>
   <tabstop>ICEdit</tabstop>
   <tabstop>nameEdit</tabstop>
   <tabstop>cityEdit</tabstop>
@@ -353,8 +356,8 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>624</x>
-     <y>514</y>
+     <x>789</x>
+     <y>691</y>
     </hint>
     <hint type="destinationlabel">
      <x>350</x>
@@ -369,8 +372,8 @@
    <slot>prev()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>452</x>
-     <y>512</y>
+     <x>617</x>
+     <y>689</y>
     </hint>
     <hint type="destinationlabel">
      <x>337</x>
@@ -385,8 +388,8 @@
    <slot>next()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>526</x>
-     <y>517</y>
+     <x>691</x>
+     <y>694</y>
     </hint>
     <hint type="destinationlabel">
      <x>670</x>
@@ -411,30 +414,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButton</sender>
-   <signal>clicked()</signal>
-   <receiver>NewInvoice</receiver>
-   <slot>copyToVS()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>174</x>
-     <y>123</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>197</x>
-     <y>512</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>newRcvButton</sender>
    <signal>clicked()</signal>
    <receiver>NewInvoice</receiver>
    <slot>newRcv()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>599</x>
-     <y>472</y>
+     <x>764</x>
+     <y>649</y>
     </hint>
     <hint type="destinationlabel">
      <x>670</x>
@@ -450,7 +437,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>186</x>
-     <y>474</y>
+     <y>651</y>
     </hint>
     <hint type="destinationlabel">
      <x>100</x>
@@ -466,11 +453,59 @@
    <hints>
     <hint type="sourcelabel">
      <x>134</x>
-     <y>476</y>
+     <y>653</y>
     </hint>
     <hint type="destinationlabel">
      <x>122</x>
      <y>512</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>NewInvoice</receiver>
+   <slot>newItm()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>785</x>
+     <y>648</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>672</x>
+     <y>431</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>createInvButton</sender>
+   <signal>clicked()</signal>
+   <receiver>NewInvoice</receiver>
+   <slot>createInv()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>457</x>
+     <y>613</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>447</x>
+     <y>688</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>printInvButton</sender>
+   <signal>clicked()</signal>
+   <receiver>NewInvoice</receiver>
+   <slot>printInv()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>349</x>
+     <y>649</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>323</x>
+     <y>690</y>
     </hint>
    </hints>
   </connection>
@@ -479,8 +514,10 @@
   <slot>prev()</slot>
   <slot>next()</slot>
   <slot>currentChanged()</slot>
-  <slot>copyToVS()</slot>
   <slot>newRcv()</slot>
   <slot>filterRcv(QString)</slot>
+  <slot>newItm()</slot>
+  <slot>createInv()</slot>
+  <slot>printInv()</slot>
  </slots>
 </ui>

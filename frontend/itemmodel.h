@@ -14,7 +14,7 @@ private:
     int first;
 
 public:
-    ItemModel() : counts(), comments(), first(0) {};
+    ItemModel() : counts(), comments(), first(0) {}
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     bool setData(const QModelIndex &index, const QVariant &value,
