@@ -1,0 +1,6 @@
+======
+SlUcto
+======
+
+SlUcto is a simple accounting program to generate invoices. It is written in
+perl (the commandline part) and Qt (the GUI).
