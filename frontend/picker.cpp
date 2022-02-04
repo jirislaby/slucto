@@ -1,6 +1,6 @@
 #include <QApplication>
 #include <QDebug>
-#include <QDesktopWidget>
+#include <QScreen>
 
 #include "picker.h"
 #include "ui_picker.h"
@@ -11,7 +11,7 @@ Picker::Picker(QWidget *parent) :
 {
     ui->setupUi(this);
     setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter,
-            size(), qApp->desktop()->availableGeometry()));
+	    size(), qApp->primaryScreen()->availableGeometry()));
 }
 
 Picker::~Picker()

@@ -1,6 +1,6 @@
 #include <QApplication>
 #include <QDebug>
-#include <QDesktopWidget>
+#include <QScreen>
 
 #include "newinvoice.h"
 #include "printinvoice.h"
@@ -12,7 +12,7 @@ NewInvoice::NewInvoice(QWidget *parent) :
 {
     ui->setupUi(this);
     setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter,
-            size(), qApp->desktop()->availableGeometry()));
+	    size(), qApp->primaryScreen()->availableGeometry()));
 
     buttonsEnable();
     setupModels();
@@ -186,8 +186,8 @@ void NewInvoice::createInv()
     QSqlRecord rec = invoice.record();
     rec.setValue("id", ui->invNOBox->value());
     rec.setValue("receiver", ui->ICEdit->text().toInt());
-    rec.setValue("issuance", QDateTime(ui->issEdit->date()).toTime_t());
-    rec.setValue("due", QDateTime(ui->dueEdit->date()).toTime_t());
+    rec.setValue("issuance", ui->issEdit->dateTime().toSecsSinceEpoch());
+    rec.setValue("due", ui->dueEdit->dateTime().toSecsSinceEpoch());
     qDebug() << rec;
     if (invoice.insertRecord(-1, rec))
         ui->printInvButton->setEnabled(true);
