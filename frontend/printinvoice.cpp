@@ -37,7 +37,7 @@ void PrintInvoice::printInvoice(int id)
         QProcess process;
         process.start("slucto_cli", QStringList() << QString::number(id));
         process.waitForFinished(-1);
-        qDebug() << "exit code", process.exitCode();
+	//qDebug() << "exit code" << process.exitCode();
 }
 
 void PrintInvoice::printInvoice()
@@ -49,7 +49,7 @@ void PrintInvoice::printInvoice()
     }
     for (QModelIndex &i : sm->selectedRows()) {
         qulonglong id = model.record(i.row()).value("id").toULongLong();
-        qDebug() << "row" << i.row() << "id" << id;
+	//qDebug() << "row" << i.row() << "id" << id;
 
         printInvoice(id);
     }
