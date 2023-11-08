@@ -1,6 +1,4 @@
-#include "newinvoice.h"
 #include "picker.h"
-#include "printinvoice.h"
 #include <QApplication>
 #include <QtSql>
 #include <QDebug>
