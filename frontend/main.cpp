@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
     QDir confDir(QStandardPaths::standardLocations(QStandardPaths::AppConfigLocation)[0]);
     QString confFile(confDir.absoluteFilePath("slucto.db"));
     if (!QFile::exists(confFile)) {
-        qCritical("database file not found at " + confFile.toLatin1());
+        qCritical() << "database file not found at" << confFile;
         return EXIT_FAILURE;
     }
     qDebug() << "using database at " << confFile;
