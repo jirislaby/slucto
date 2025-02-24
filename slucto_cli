@@ -2,7 +2,8 @@
 use strict;
 use DBI;
 use File::Basename;
-#use Data::Dumper;
+use Term::ANSIColor qw(colored);
+use Text::CharWidth qw(mbswidth);
 
 my $dbfile = $ENV{"HOME"} . "/.config/slucto/slucto.db";
 my $one_invoice = scalar @ARGV >= 1;
@@ -42,7 +43,8 @@ sub dump_items($) {
 				print OUT;
 			}
 		} else {
-			printf("    %-75s %4d * %6.2f = %6.2f\n" ,$name,
+			printf("    %s%s %4d * %6.2f = %6.2f\n" ,$name,
+				' ' x (75 - mbswidth($name)),
 				$$item{'count'}, $$item{'price'},
 				$$item{'celkem'});
 		}
@@ -56,19 +58,19 @@ sub dump_items($) {
 my $data = $dbh->prepare("SELECT invoice.id, printf('%.10d', invoice.id) var, " .
 	"strftime('%d. %m. %Y', invoice.issuance, 'unixepoch', 'localtime') issuance, " .
 	"strftime('%d. %m. %Y', invoice.due, 'unixepoch', 'localtime') due, " .
-	"receiver.* FROM invoice, receiver ON invoice.receiver == receiver.ic " .
-	($one_invoice ? "WHERE invoice.id == ?" : "")) || die "cannot prepare";
+	"receiver.* FROM invoice, receiver ON invoice.receiver = receiver.ic " .
+	($one_invoice ? "WHERE invoice.id = ?" : "")) || die "cannot prepare";
 
 if (!$one_invoice) {
 	$data->execute() || die 'cannot execute';
 	while (my $invoice = $data->fetchrow_hashref) {
-		print "ID($$invoice{'id'}) V($$invoice{'issuance'}) ",
-			"S($$invoice{'due'}) RCV($$invoice{'name'})\n";
+		print colored("ID($$invoice{'id'}) V($$invoice{'issuance'}) " .
+			"S($$invoice{'due'}) RCV($$invoice{'name'})\n", 'green');
 		dump_items($$invoice{'id'});
 	}
 
 	$dbh->disconnect;
-	exit 1;
+	exit 0;
 }
 
 my $cislo_faktury = $ARGV[0];
