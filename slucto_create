@@ -55,6 +55,24 @@ $dbh->do("CREATE TABLE invoice_item(id_invoice INTEGER NOT NULL, " .
 		"FOREIGN KEY(id_invoice) REFERENCES invoice(id), " .
 		"FOREIGN KEY(id_item) REFERENCES item(id))");
 
+$dbh->do("CREATE VIEW invoice_view AS " .
+		"SELECT invoice.id, " .
+		"strftime('%d. %m. %Y', invoice.issuance, 'unixepoch', 'localtime') AS issuance, " .
+		"strftime('%d. %m. %Y', invoice.due, 'unixepoch', 'localtime') AS due, " .
+		"receiver.* FROM invoice " .
+		"LEFT JOIN receiver ON invoice.receiver = receiver.ic");
+$dbh->do("CREATE VIEW invoice_item_view AS " .
+		"SELECT invoice.id, " .
+		"strftime('%d. %m. %Y', invoice.issuance, 'unixepoch', 'localtime') AS issuance, " .
+		"strftime('%d. %m. %Y', invoice.due, 'unixepoch', 'localtime') AS due, " .
+		"receiver.ic, receiver.name, item.name, " .
+		"invoice_item.count, invoice_item.price, " .
+		"invoice_item.count * invoice_item.price AS total " .
+		"FROM invoice " .
+		"LEFT JOIN receiver ON invoice.receiver = receiver.ic " .
+		"LEFT JOIN invoice_item ON invoice.id = invoice_item.id_invoice " .
+		"LEFT JOIN item ON invoice_item.id_item = item.id");
+
 my $data = $dbh->prepare("INSERT INTO receiver(name, street, city, zip, ic) " .
 		"VALUES (?, ?, ?, ?, ?)");
 $data->execute("PC-DIR Real, s.r.o.", "Mlýnská 425/70", "Brno", "602 00",
